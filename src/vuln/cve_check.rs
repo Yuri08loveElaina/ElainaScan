@@ -1,14 +1,15 @@
 use anyhow::{Result, anyhow};
-use serde::{Deserialize};
+use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
-use std::collections::HashMap;
+use std::collections::HashSet;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct CVEEntry {
     pub cve_id: String,
     pub description: String,
     pub affected_products: Vec<String>,
+    pub severity: Option<String>,
 }
 
 pub fn load_cve_db(path: &str) -> Result<Vec<CVEEntry>> {
@@ -19,24 +20,29 @@ pub fn load_cve_db(path: &str) -> Result<Vec<CVEEntry>> {
 }
 
 pub fn check_service_cve(service: &str, version: &str, cve_db: &[CVEEntry]) -> Result<Vec<String>> {
-    let mut found = Vec::new();
-    let target = format!("{} {}", service.to_lowercase(), version.to_lowercase());
+    let mut found = HashSet::new();
+    let normalized_service = service.to_lowercase();
+    let normalized_version = version.to_lowercase();
 
     for entry in cve_db {
         for affected in &entry.affected_products {
-            if target.contains(&affected.to_lowercase()) {
-                found.push(format!(
-                    "{} | {}",
+            let affected_normalized = affected.to_lowercase();
+            if affected_normalized.contains(&normalized_service) && affected_normalized.contains(&normalized_version) {
+                let severity = entry.severity.clone().unwrap_or_else(|| "Unknown".to_string());
+                let desc = entry.description.chars().take(100).collect::<String>();
+                found.insert(format!(
+                    "{} | Severity: {} | {}",
                     entry.cve_id,
-                    entry.description.chars().take(80).collect::<String>()
+                    severity,
+                    desc
                 ));
             }
         }
     }
 
     if found.is_empty() {
-        Err(anyhow!("No CVE found"))
+        Err(anyhow!("No CVE found for {} {}", service, version))
     } else {
-        Ok(found)
+        Ok(found.into_iter().collect())
     }
 }
