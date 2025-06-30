@@ -1,0 +1,31 @@
+# Rust build
+/target/
+
+# Executables and binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Backup / temp
+*.log
+*.tmp
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+
+# By Cargo
+Cargo.lock
+
+# macOS
+.DS_Store
+
+# Windows thumbnail
+Thumbs.db
+
+# Node / front-end if you add dashboard
+node_modules/
+dist/
+build/
