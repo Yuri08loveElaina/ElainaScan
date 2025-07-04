@@ -1,63 +1,74 @@
-use clap::{Parser, ArgGroup, ValueEnum};
+use clap::{Parser, ValueEnum};
 
 #[derive(Parser, Debug)]
 #[command(
-    author = "Yuri08",
-    version,
-    about = "ElainaScan - Fast Port & Vuln Scanner",
-    long_about = "🌸 ElainaScan là công cụ pentest quét port + vuln siêu nhanh bằng Rust, hỗ trợ NSE Nmap auto."
+    name = "ElainaScan",
+    version = "0.1.0",
+    about = "🌸 Fast, aesthetic Rust-based Port + Vuln Scanner",
+    author = "Yuri08loveElaina"
 )]
-#[command(group(
-    ArgGroup::new("mode")
-        .required(true)
-        .args(["banner", "finger", "vuln", "nse"])
-))]
 pub struct CliArgs {
-    /// Target IP or domain (e.g., 192.168.1.10, google.com)
-    #[arg(long)]
+    /// Target IP or domain
+    #[arg(short, long, help = "Target IP or domain")]
     pub target: String,
 
-    /// Comma-separated ports or range (e.g., 22,80,443 or 1-1000)
-    #[arg(long)]
+    /// Ports to scan (e.g., 22,80,443 or 1-65535)
+    #[arg(short, long, help = "Ports to scan (e.g., 22,80,443 or 1-65535)")]
     pub ports: String,
 
-    /// Enable banner grabbing on open ports
-    #[arg(long, help = "Banner grab mode")]
+    /// Enable Banner Grab Mode
+    #[arg(long, help = "Enable Banner Grab Mode")]
     pub banner: bool,
 
-    /// Enable OS fingerprinting on target
-    #[arg(long, help = "OS Fingerprint mode")]
+    /// Enable Fingerprint Mode
+    #[arg(long, help = "Enable Fingerprint Mode")]
     pub finger: bool,
 
-    /// Enable vulnerability scan using local CVE database
-    #[arg(long, help = "Vulnerability check mode")]
+    /// Fingerprint mode type (fast using Nmap or stealth using Rust)
+    #[arg(long, value_enum, help = "Fingerprint mode type (fast or stealth)")]
+    pub finger_mode: Option<FingerMode>,
+
+    /// Enable Vulnerability Check
+    #[arg(long, help = "Enable Vulnerability Scan using local CVE DB")]
     pub vuln: bool,
 
-    /// Run Nmap NSE scripts on target
-    #[arg(long, help = "Run Nmap NSE scripts on target")]
+    /// Enable Nmap NSE Script Scan
+    #[arg(long, help = "Enable Nmap NSE Script Scan")]
     pub nse: bool,
 
-    /// Specify NSE scripts to run (default: vuln)
-    #[arg(long, help = "Specify NSE scripts to run, e.g., http-vuln-cve2006-3392")]
+    /// Custom NSE scripts (comma-separated)
+    #[arg(long, help = "Custom NSE scripts to run (comma-separated)")]
     pub nse_scripts: Option<String>,
 
-    /// Save scan results to a report file
-    #[arg(long, help = "Save report to JSON/CSV/HTML file")]
+    /// Output report file (JSON, TXT, CSV, HTML)
+    #[arg(short, long, help = "Output report file (JSON, TXT, CSV, HTML)")]
     pub report: Option<String>,
 
-    /// Set concurrency level for scanning
-    #[arg(long, help = "Concurrency level for port scan (default: 1000)")]
+    /// Set concurrency for port scan
+    #[arg(long, help = "Concurrency level for scanning (default 100)")]
     pub concurrency: Option<usize>,
 
-    /// Timeout per connection in milliseconds
-    #[arg(long, help = "Timeout per probe in milliseconds")]
+    /// Set timeout in ms
+    #[arg(long, help = "Timeout per connection in milliseconds")]
     pub timeout: Option<u64>,
 
-    /// Enable debug output for troubleshooting
-    #[arg(long, help = "Enable verbose debug output")]
-    pub debug: bool,
-
-    /// Silence non-essential output, only print results
-    #[arg(long, help = "Silent mode, only print results")]
+    /// Silent mode (less verbose)
+    #[arg(long, help = "Silent mode (less verbose)")]
     pub silent: bool,
+
+    /// Debug mode (show arguments and debug info)
+    #[arg(long, help = "Enable debug mode")]
+    pub debug: bool,
+}
+
+#[derive(ValueEnum, Clone, Debug)]
+pub enum FingerMode {
+    Fast,
+    Stealth,
+}
+
+impl CliArgs {
+    pub fn parse() -> Self {
+        <Self as Parser>::parse()
+    }
 }
