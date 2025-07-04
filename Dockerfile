@@ -3,17 +3,17 @@
 # =============================
 FROM rust:1.77-alpine AS builder
 
-# Install dependencies
+# Install dependencies for building
 RUN apk add --no-cache musl-dev openssl-dev pkgconf bash
 
-# Create workdir
+# Set workdir
 WORKDIR /build
 
-# Copy Cargo manifests first for caching
+# Copy manifests first for cache
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 
-# Build release
+# Build in release mode
 RUN cargo build --release
 
 # =============================
@@ -21,10 +21,10 @@ RUN cargo build --release
 # =============================
 FROM alpine:latest
 
-# Install necessary libs and nmap for NSE
+# Install runtime dependencies and nmap
 RUN apk add --no-cache libgcc libstdc++ nmap
 
-# Create user for security
+# Create non-root user for security
 RUN addgroup -S elaina && adduser -S elaina -G elaina
 
 # Create app directory
