@@ -36,3 +36,7 @@ strip = "debuginfo" # strip debug info for smaller binaries
 
 [features]
 default = []
+
+[dependencies]
+crossterm = "0.27"
+std = { package = "std", version = "*" }
