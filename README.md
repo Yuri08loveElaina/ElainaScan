@@ -8,61 +8,115 @@
 
 ## 🚀 Giới thiệu
 
-**ElainaScan** là công cụ **Port Scanner + Vuln Scanner siêu nhanh, chính xác, đẹp mắt** phát triển bằng **Rust**, kết hợp:
-- Tốc độ quét của **Masscan**.
-- Xác thực port mở chuẩn như **RustScan**.
-- Định hướng mở rộng detect service, OS fingerprint, vuln scan như **Nmap**.
+**ElainaScan** là **High-speed CVE & Port Vulnerability Scanner** phát triển bằng **Rust**, kết hợp tốc độ **Masscan**, xác thực port chuẩn như **RustScan**, và mở rộng detect **service / OS / vuln / NSE** như **Nmap**.
 
-**Mục tiêu:** Phục vụ **pentest thực chiến, recon Bug Bounty, CTF, lab nghiên cứu an toàn thông tin**.
+**Phục vụ:**  
+✨ **Pentest thực chiến**  
+✨ **Recon Bug Bounty**  
+✨ **CTF & Lab an toàn thông tin**
 
 ---
 
-## ⚙️ Tính năng
+## ⚡ Tính năng
 
 ✅ Quét port TCP tốc độ cao, concurrency tùy chỉnh.  
 ✅ Xác thực port tránh false positive.  
-✅ Banner grab, OS fingerprint, CVE check local.  
-✅ Tích hợp chạy NSE nếu cần.  
-✅ In kết quả màu dễ đọc trên terminal.  
+✅ Banner grabbing (HTTP/SSH/FTP).  
+✅ OS & service version detection.  
+✅ Vuln check local CVE DB.  
+✅ Auto chạy Nmap NSE nếu cần.  
+✅ Xuất kết quả **JSON / CSV / HTML**.  
 ✅ Gọn nhẹ, dễ build cross-platform.
 
 ---
 
 ## 🛠️ Cài đặt
 
-Yêu cầu:
-- Rust + Cargo
+### Yêu cầu:
+- Rust + Cargo (hoặc dùng Docker)
+- Git
 
-Clone repo:
+### Clone repo:
 ```bash
 git clone https://github.com/Yuri08loveElaina/ElainaScan.git
 cd ElainaScan
 ```
 
-Build Release:
+### Build release:
 ```bash
 cargo build --release
 ```
 
-File chạy:
+File **build xong sẽ nằm tại:**
 ```bash
 ./target/release/elainascan
 ```
 
 ---
 
-## 🚀 Cách chạy
+## 🐳 Chạy bằng Docker (khuyến nghị nếu không muốn cài Rust)
 
-Quét banner grab:
+Build:
 ```bash
-./target/release/elainascan --target 192.168.1.10 --ports 22,80,443 --banner --report banner_192.json
+docker build -t elainascan .
 ```
 
-Chạy nhanh:
+Chạy:
 ```bash
-cargo run --release -- --target 192.168.1.10 --ports 80,443 --banner
+docker run --rm elainascan --target 13.92.97.133 --ports 80,443 --banner --finger --vuln
 ```
 
 ---
 
-**Chúc vui vẻ ;). 🩶**
+## ✨ Cách sử dụng
+
+### ⚡ Quét port + banner grab:
+```bash
+./elainascan --target 192.168.1.10 --ports 22,80,443 --banner
+```
+
+### ⚡ Quét kèm OS detect:
+```bash
+./elainascan --target 192.168.1.10 --ports 22,80,443 --finger
+```
+
+### ⚡ Quét vuln (CVE local DB):
+```bash
+./elainascan --target 192.168.1.10 --ports 22,80,443 --vuln
+```
+
+### ⚡ Quét NSE:
+```bash
+./elainascan --target 192.168.1.10 --ports 80,443 --nse --nse-scripts vuln
+```
+
+### ⚡ Xuất báo cáo:
+```bash
+./elainascan --target 192.168.1.10 --ports 22,80,443 --banner --finger --vuln --report report.json
+```
+
+---
+
+## ✨ Tính năng nâng cao
+
+- **`--concurrency <num>`**: Tùy chỉnh luồng quét song song.
+- **`--nse-scripts <script>`**: Chạy script NSE cụ thể (nmap phải cài sẵn).
+- **`--report <file>`**: Xuất kết quả ra file JSON/CSV/HTML tự động.
+
+---
+
+## ❤️ Góp ý / Issue
+
+Nếu phát hiện bug hoặc cần thêm tính năng:
+- Mở [Issue](https://github.com/Yuri08loveElaina/ElainaScan/issues)
+- Hoặc fork & PR
+
+---
+
+## 📜 License
+
+**MIT License**
+
+---
+
+## ✨ Yuri08 chúc bạn pentest vui vẻ!
