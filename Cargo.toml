@@ -1,12 +1,12 @@
 [package]
 name = "elainascan"
 version = "1.0.0"
-edition = "2021"
 authors = ["YURI08"]
+edition = "2021"
 license = "MIT"
 description = "High-speed Rust CVE & Port Vulnerability Scanner"
 repository = "https://github.com/Yuri08loveElaina/ElainaScan"
-keywords = ["security", "scanner", "cve", "nmap", "pentest"]
+keywords = ["security", "scanner", "cve", "nmap", "pentest", "recon"]
 categories = ["command-line-utilities", "network-programming", "security"]
 readme = "README.md"
 
@@ -25,18 +25,12 @@ indicatif = "0.17"
 reqwest = { version = "0.12", features = ["blocking", "json"] }
 chrono = "0.4"
 html-escape = "0.2"
-
-# You can re-enable nmap-parser if needed for advanced NSE parsing:
-# nmap-parser = "0.5"
+crossterm = "0.27"
 
 [profile.release]
-opt-level = "z"   # prioritize size
-lto = true        # enable link-time optimization
-strip = "debuginfo" # strip debug info for smaller binaries
+opt-level = "z"
+lto = true
+strip = "debuginfo"
 
 [features]
 default = []
-
-[dependencies]
-crossterm = "0.27"
-std = { package = "std", version = "*" }
