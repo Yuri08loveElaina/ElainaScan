@@ -1,38 +1,42 @@
-mod banner;
-mod finger;
-mod vuln;
-mod report;
-mod utils;
 mod cli;
+mod nse;
 
-use anyhow::Result;
 use cli::CliArgs;
+use anyhow::Result;
 
 fn main() -> Result<()> {
     let args = CliArgs::parse();
 
+    // Banner Grab Mode (placeholder)
     if args.banner {
-        let results = banner::mod_banner_scan(&args.target, &args.ports)?;
-        if let Some(path) = &args.report {
-            report::report_json(&results, path)?;
-        }
+        println!("[*] Banner grab mode selected for target: {}", args.target);
+        println!("(Tính năng này sẽ được triển khai ở module banner)");
     }
 
+    // Fingerprint Mode (placeholder)
     if args.finger {
-        let results = finger::mod_ttl_finger(&args.target)?;
-        if let Some(path) = &args.report {
-            report::report_json(&results, path)?;
-        }
+        println!("[*] OS Fingerprinting mode selected for target: {}", args.target);
+        println!("(Tính năng này sẽ được triển khai ở module finger)");
     }
 
+    // Vulnerability Scan Mode (placeholder)
     if args.vuln {
-        if let Some(cve_db) = &args.cve_db {
-            vuln::vuln_check_cve(cve_db, &args.service, &args.version)?;
+        println!("[*] Vulnerability scan mode selected for target: {}", args.target);
+        println!("(Tính năng này sẽ được triển khai ở module vuln với local CVE DB)");
+    }
+
+    // Nmap NSE Mode
+    if args.nse {
+        if args.silent == false {
+            println!("[*] Running Nmap NSE scripts on target: {}", args.target);
+            if let Some(scripts) = &args.nse_scripts {
+                println!("[*] Using custom NSE scripts: {}", scripts);
+            } else {
+                println!("[*] Using default NSE script: vuln");
+            }
         }
-        if let Some(scripts) = &args.nse_scripts {
-            let targets = utils::parse_targets(&args.target, &args.ports)?;
-            vuln::vuln_scan_nse_bulk(&targets, scripts, args.concurrency)?;
-        }
+
+        nse::nse::run_nmap_nse(&args.target, &args.ports, args.nse_scripts.as_deref())?;
     }
 
     Ok(())
