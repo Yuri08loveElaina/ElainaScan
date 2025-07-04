@@ -4,7 +4,14 @@ mod finger;
 mod banner;
 mod vuln;
 mod report;
+mod utils;
+use utils::banner;
 
+fn main() -> anyhow::Result<()> {
+    banner::show();
+    // CLI + scan logic tiếp theo
+    Ok(())
+}
 use cli::{CliArgs, FingerMode};
 use anyhow::Result;
 
